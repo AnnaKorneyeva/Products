@@ -12,7 +12,8 @@
   ###### Запросы
     1. Запрос по подсчету выполненных заказов работниками доставки      
     
-    SELECT a.courier_id,b.first_name as 'Работник доставки',b.last_name,b.phone_number, COUNT(order_id) as 'Количество выполненных заказов'
+    SELECT a.courier_id,b.first_name as 'Работник доставки',b.last_name,b.phone_number, 
+    COUNT(order_id) as 'Количество выполненных заказов'
     FROM #delivery_list a 
        LEFT join #courier_info  b on a.courier_id=b.courier_id
    WHERE date_arrived IS NOT NULL

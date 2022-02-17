@@ -120,9 +120,9 @@ end;
 procedure TfrmR0807009.FormCreate(Sender: TObject);
 begin
  RestoreFormsSettings(FrmR0807009);
- //Начальный период начало текущего года
+ //ГЌГ Г·Г Г«ГјГ­Г»Г© ГЇГҐГ°ГЁГ®Г¤ Г­Г Г·Г Г«Г® ГІГҐГЄГіГ№ГҐГЈГ® ГЈГ®Г¤Г 
   dtBeginPeriod.Date:=StartOfTheYear(Now);
- //Конечный период текущая дата
+ //ГЉГ®Г­ГҐГ·Г­Г»Г© ГЇГҐГ°ГЁГ®Г¤ ГІГҐГЄГіГ№Г Гї Г¤Г ГІГ 
   dtFinPeriod.Date:=EndOfTheMonth(Now);
 end;
 
@@ -138,14 +138,14 @@ var
   str:string;
 begin
   R0807009_report;
-  str:='Сводная справка о среднем времени устранения отказов в сутках c '+ datetostr(dtBeginPeriod.Date)+' по '+ datetostr(dtFinPeriod.Date);
+  str:='Г‘ГўГ®Г¤Г­Г Гї Г±ГЇГ°Г ГўГЄГ  Г® Г±Г°ГҐГ¤Г­ГҐГ¬ ГўГ°ГҐГ¬ГҐГ­ГЁ ГіГ±ГІГ°Г Г­ГҐГ­ГЁГї Г®ГІГЄГ Г§Г®Гў Гў Г±ГіГІГЄГ Гµ c '+ datetostr(dtBeginPeriod.Date)+' ГЇГ® '+ datetostr(dtFinPeriod.Date);
 end;
 
 procedure TfrmR0807009.ExportExcel(var a: TMessage);
 var
   str: string;
 begin
-  str:='Сводная справка о среднем времени устранения отказов в сутках c '+ datetostr(dtBeginPeriod.Date)+' по '+ datetostr(dtFinPeriod.Date);
+  str:='Г‘ГўГ®Г¤Г­Г Гї Г±ГЇГ°Г ГўГЄГ  Г® Г±Г°ГҐГ¤Г­ГҐГ¬ ГўГ°ГҐГ¬ГҐГ­ГЁ ГіГ±ГІГ°Г Г­ГҐГ­ГЁГї Г®ГІГЄГ Г§Г®Гў Гў Г±ГіГІГЄГ Гµ c '+ datetostr(dtBeginPeriod.Date)+' ГЇГ® '+ datetostr(dtFinPeriod.Date);
   ExportExcelApp(grdUstrOtkaz,str,'R0807009') ;
 end;
 
@@ -160,33 +160,33 @@ begin
     st := #64;
   Screen.Cursor := crAppStart;
 
-  try // подключение сервера
+  try // ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г±ГҐГ°ГўГҐГ°Г 
     EApp := CreateOleObject('Excel.Application');
   except
-    MessageBox(FrmR0807009.Handle,'Ошибка подсоединения к OLE-серверу Excel.', 'Ошибка',
+    MessageBox(FrmR0807009.Handle,'ГЋГёГЁГЎГЄГ  ГЇГ®Г¤Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГї ГЄ OLE-Г±ГҐГ°ГўГҐГ°Гі Excel.', 'ГЋГёГЁГЎГЄГ ',
       MB_OK + MB_ICONERROR);
     exit;
   end;
 
-  try // создание новой книги
+  try // Г±Г®Г§Г¤Г Г­ГЁГҐ Г­Г®ГўГ®Г© ГЄГ­ГЁГЈГЁ
       EApp.Workbooks.Add(ExtractFilePath(Application.ExeName) +'\Shablon\R0807009.xlt');
     WorkBook := EApp.Workbooks[1];
   except
-    MessageBox(FrmR0807009.Handle, 'Ошибка создания рабочей книги.','Ошибка', MB_OK + MB_ICONERROR);
+    MessageBox(FrmR0807009.Handle, 'ГЋГёГЁГЎГЄГ  Г±Г®Г§Г¤Г Г­ГЁГї Г°Г ГЎГ®Г·ГҐГ© ГЄГ­ГЁГЈГЁ.','ГЋГёГЁГЎГЄГ ', MB_OK + MB_ICONERROR);
     EApp.Quit;
     exit;
   end;
-  Sheet := WorkBook.Sheets[1]; // добавление листов
+  Sheet := WorkBook.Sheets[1]; // Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГҐ Г«ГЁГ±ГІГ®Гў
   adsUstrOtkaz.DisableControls;
   adsUstrOtkaz.first;
 
-  // название отчета
-  stroka1 :=' Основные отказы за период c '+DateToStr(dtBeginPeriod.Date)+' до '+DateToStr(dtfinPeriod.Date)+'г. (по информации УТиСОП)'+shapka;  cell := Sheet.Range[Sheet.Cells[1, 1], Sheet.Cells[4, 1]];
+  // Г­Г Г§ГўГ Г­ГЁГҐ Г®ГІГ·ГҐГІГ 
+  stroka1 :=' ГЋГ±Г­Г®ГўГ­Г»ГҐ Г®ГІГЄГ Г§Г» Г§Г  ГЇГҐГ°ГЁГ®Г¤ c '+DateToStr(dtBeginPeriod.Date)+' Г¤Г® '+DateToStr(dtfinPeriod.Date)+'ГЈ. (ГЇГ® ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ Г“Г’ГЁГ‘ГЋГЏ)'+shapka;  cell := Sheet.Range[Sheet.Cells[1, 1], Sheet.Cells[4, 1]];
   cell.MergeCells := True;
   cell.Font.Bold := True;
   cell.value := stroka1;
 
-  // заполнение данными
+  // Г§Г ГЇГ®Г«Г­ГҐГ­ГЁГҐ Г¤Г Г­Г­Г»Г¬ГЁ
    cell := Sheet.Range[Sheet.Cells[9, 1], Sheet.Cells[9, 4]];
    i:=9;
    kolch:=0;v_zav:=0;kolzap:=0;
@@ -244,7 +244,7 @@ begin
           cell := Sheet.Range[Sheet.Cells[i, 1], Sheet.Cells[i, 2]];
           cell.MergeCells := True;
           kolchAvg:=roundto(kolch/kolzap,-2);
-          sheet.cells[i, 1].value := 'ИТОГО:';
+          sheet.cells[i, 1].value := 'Г€Г’ГЋГѓГЋ:';
           sheet.cells[i, 1].Font.Bold := True;
           Sheet.Cells[I, 6].value :=kolch;
           Sheet.Cells[I, 7].value :=v_zav;
@@ -261,10 +261,10 @@ begin
       end;
     I := I + 1;
 end;
-  // обрамление таблицы
+  // Г®ГЎГ°Г Г¬Г«ГҐГ­ГЁГҐ ГІГ ГЎГ«ГЁГ¶Г»
   cell := Sheet.Range[Sheet.Cells[i, 1], Sheet.Cells[i, 2]];
   cell.MergeCells := True;
-  sheet.cells[i, 1].value := 'ИТОГО:';
+  sheet.cells[i, 1].value := 'Г€Г’ГЋГѓГЋ:';
   sheet.cells[i, 1].Font.Bold := True;
   Sheet.Cells[I, 6].value :=kolch;
   Sheet.Cells[I, 7].value :=v_zav;
@@ -277,7 +277,7 @@ end;
   v_zavi:=v_zavi+v_zav;
   tn :=adsUstrOtkaz.FieldByName('tn').AsString;
   I := I + 1;
-  sheet.cells[i, 1].value := 'ВСЕГО:';
+  sheet.cells[i, 1].value := 'Г‚Г‘Г…ГѓГЋ:';
   Sheet.Cells[I, 6].value :=kolchi;
   Sheet.Cells[I, 7].value :=v_zavi;
   cell := Sheet.Range[Sheet.Cells[i, 1], Sheet.Cells[i, 12]];

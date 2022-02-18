@@ -16,6 +16,7 @@ CREATE TABLE products
  price      FLOAT NOT NULL,
  weight     FLOAT NULL);
 
+-- Продукты Добавление данных в таблицу 
 INSERT INTO products(menu_name, price,weight) VALUES
 ('Чикен Фрайз', 5.0,270.0),
 ('Шаурма Арабская Тарелка', 11.0,690),
@@ -68,6 +69,7 @@ last_name VARCHAR(35) NOT NULL,
 phone_number VARCHAR(20) NOT NULL,
 delivery_type VARCHAR(6) NOT NULL);
 
+--Добавление. Работники доставки
 INSERT INTO courier_info(first_name, last_name, phone_number, delivery_type) VALUES
 ('Даниил', 'Роев', '+ 375 41 655 0954', 'Пешком'),
 ('Лизавета', 'Лифанова', '+ 375 41 743 0146', 'Авто'),
@@ -75,12 +77,14 @@ INSERT INTO courier_info(first_name, last_name, phone_number, delivery_type) VAL
 ('Назар', 'Борщев', '+ 375 41 566 5516', 'Авто'),
 ('Артемий', 'Ковалев', '+ 375 41 566 5516', 'Вело');
 
+--Таблица заказы
 CREATE TABLE orders
 (order_id INT IDENTITY(1,1) PRIMARY KEY,
 customer_id INT NOT NULL,
 date_get datetime NOT NULL, 
 FOREIGN KEY (customer_id) REFERENCES customers (customer_id));
 
+--Добавление в Таблица заказы
 INSERT INTO orders(customer_id, date_get) VALUES(1, getdate()),
 (2, getdate()),(3, getdate()),(4, getdate()),
 (5, getdate()),(6, getdate()),(7, getdate()),
@@ -88,7 +92,7 @@ INSERT INTO orders(customer_id, date_get) VALUES(1, getdate()),
 (11, getdate()),(12, getdate()),(13, getdate()),
 (14, getdate()),(15, getdate())
 
-
+--Таблица доставка
 CREATE TABLE delivery_list
 (delivery_id INT IDENTITY(1,1) PRIMARY KEY,
 order_id INT UNIQUE NOT NULL,
@@ -99,7 +103,7 @@ payment_method VARCHAR(4),
 FOREIGN KEY (order_id) REFERENCES orders(order_id),
 FOREIGN KEY (courier_id) REFERENCES courier_info(courier_id));
 
-
+--Добавление данных Таблица доставка
 INSERT INTO delivery_list VALUES
 (1, 3, '2021-02-26 17:59:15', 'Yes', 'Cash'),
 (2, 4, '2021-02-26 18:01:05', 'Yes', 'Card'),
@@ -127,6 +131,7 @@ PRIMARY KEY (order_id, product_id),
 FOREIGN KEY (order_id) REFERENCES orders(order_id),
 FOREIGN KEY (product_id) REFERENCES products(product_id));
 
+--Добавление Заказы продуктов
 INSERT INTO orders_products VALUES
 (1, 1, 2), (1, 4, 1), (1, 10, 1),
 (2, 4, 1), (2, 5, 1), (3, 3, 1),
@@ -137,37 +142,3 @@ INSERT INTO orders_products VALUES
 (12, 10, 1),(13, 4, 2),(14, 5, 1),
 (15, 8, 1), (15, 7, 2);
 
--- Запрос по анализу клиентов по районам проживания
-
-  SELECT district, COUNT(district) as kol
-  FROM customers
-  GROUP BY district
-  ORDER BY COUNT(district) DESC
-
--- Запрос по количеству выполненных заказов работниками доставки
-  SELECT a.courier_id,b.first_name as 'Работник доставки',b.last_name,b.phone_number, 
-  COUNT(order_id) as 'Количество выполненных заказов'
-  FROM delivery_list a LEFT JOIN courier_info  b on a.courier_id=b.courier_id
-  WHERE date_arrived IS NOT NULL
-  GROUP BY a.courier_id,b.first_name,b.last_name,b.phone_number
-
---  Запрос по анализу позиций в меню по степени востребованности (объединение таблиц)
-  SELECT menu_name, '+ Есть заказы' as '+/-' FROM products products
-  WHERE EXISTS
-   (SELECT * FROM orders_products orders_products
-       WHERE orders_products.product_id = products.product_id)
- union all
-
-  SELECT menu_name,'- Нет заказов' FROM products products
-  WHERE NOT EXISTS
-   (SELECT * FROM orders_products orders_products
-      WHERE orders_products.product_id = products.product_id)
-
---  Запрос по подсчету суммы заказа  и нумарация позиций в заказе
-
-      SELECT  a.order_id, b.menu_name, quantity,d.phone_number,d.first_name, ROUND(price*quantity, 2) AS total_price,
-   SUM(ROUND(price*quantity, 2)) OVER(PARTITION BY  a.order_id) AS 'Sum' ,
-   ROW_NUMBER() OVER (PARTITION BY a.order_id ORDER BY a.order_id) AS 'Number'
-   FROM orders_products a INNER JOIN products  b ON a.product_id = b.product_id
-   LEFT JOIN  delivery_list c on a.order_id=c.order_id
-   LEFT JOIN customers  d on c.courier_id=d.customer_id
